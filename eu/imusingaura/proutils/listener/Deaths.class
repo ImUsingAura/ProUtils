@@ -1,0 +1,129 @@
+package eu.imusingaura.proutils.listener;
+
+import eu.imusingaura.proutils.ProUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+
+public class Deaths implements Listener {
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    public FileConfiguration stcfg;
+    public File stats;
+
+    public FileConfiguration ocfg;
+    public File optional;
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e) {
+        stats = new File(pl.getDataFolder(), "stats.yml");
+        stcfg = YamlConfiguration.loadConfiguration(stats);
+        optional = new File(pl.getDataFolder(), "optional.yml");
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        Player p = e.getEntity();
+        if (p.getKiller() instanceof Player) {
+            Player k = p.getKiller();
+            String pUUID = p.getUniqueId().toString();
+            String kUUID = k.getUniqueId().toString();
+            int kills = stcfg.getInt("Users." + kUUID + ".kills");
+            int deaths = stcfg.getInt("Users." + pUUID + ".deaths");
+
+            stcfg.set("Users." + kUUID + ".kills", kills + 1);
+            stcfg.set("Users." + pUUID + ".deaths", deaths + 1);
+            try {
+                stcfg.save(stats);
+            } catch (IOException event) {
+
+            }
+        } else {
+            String pUUID = p.getUniqueId().toString();
+            int deaths = stcfg.getInt("Users." + pUUID + ".deaths");
+            stcfg.set("Users." + pUUID + ".deaths", deaths + 1);
+            try {
+                stcfg.save(stats);
+            } catch (IOException event) {
+
+            }
+        }
+        if (ocfg.getBoolean("Killstreak.enable") == true) {
+            Player k = p.getKiller();
+            p.setLevel(0);
+            e.setDroppedExp(0);
+            if (k != null) {
+                k.setLevel(k.getLevel() + 1);
+                if (k.getLevel() == 5) {
+                    Bukkit.broadcastMessage(ocfg.getString("Killstreak.message-5").replace("&", "§").replaceAll("%player%", k.getName()).replaceAll("%streak%", String.valueOf(k.getLevel())));
+                    k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+                    if (ocfg.getBoolean("Killstreak.execute-commands") == true) {
+                        for (Object o : ocfg.getStringList("Killstreak.execute-commands-5")) {
+                            String type = (String) o;
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), String.valueOf(type).replaceAll("%player%", k.getName()).replace("&", "§"));
+                        }
+                    }
+                }
+                if (k.getLevel() == 10) {
+                    Bukkit.broadcastMessage(ocfg.getString("Killstreak.message-10").replace("&", "§").replaceAll("%player%", k.getName()).replaceAll("%streak%", String.valueOf(k.getLevel())));
+                    k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+                    if (ocfg.getBoolean("Killstreak.execute-commands") == true) {
+                        for (Object o : ocfg.getStringList("Killstreak.execute-commands-10")) {
+                            String type = (String) o;
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), String.valueOf(type).replaceAll("%player%", k.getName()).replace("&", "§"));
+                        }
+                    }
+                }
+                if (k.getLevel() == 20) {
+                    Bukkit.broadcastMessage(ocfg.getString("Killstreak.message-20").replace("&", "§").replaceAll("%player%", k.getName()).replaceAll("%streak%", String.valueOf(k.getLevel())));
+                    k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+                    if (ocfg.getBoolean("Killstreak.execute-commands") == true) {
+                        for (Object o : ocfg.getStringList("Killstreak.execute-commands-20")) {
+                            String type = (String) o;
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), String.valueOf(type).replaceAll("%player%", k.getName()).replace("&", "§"));
+                        }
+                    }
+                }
+                if (k.getLevel() == 30) {
+                    Bukkit.broadcastMessage(ocfg.getString("Killstreak.message-30").replace("&", "§").replaceAll("%player%", k.getName()).replaceAll("%streak%", String.valueOf(k.getLevel())));
+                    k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+                    if (ocfg.getBoolean("Killstreak.execute-commands") == true) {
+                        for (Object o : ocfg.getStringList("Killstreak.execute-commands-30")) {
+                            String type = (String) o;
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), String.valueOf(type).replaceAll("%player%", k.getName()).replace("&", "§"));
+                        }
+                    }
+                }
+                if (k.getLevel() == 40) {
+                    Bukkit.broadcastMessage(ocfg.getString("Killstreak.message-40").replace("&", "§").replaceAll("%player%", k.getName()).replaceAll("%streak%", String.valueOf(k.getLevel())));
+                    k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+                    if (ocfg.getBoolean("Killstreak.execute-commands") == true) {
+                        for (Object o : ocfg.getStringList("Killstreak.execute-commands-40")) {
+                            String type = (String) o;
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), String.valueOf(type).replaceAll("%player%", k.getName()).replace("&", "§"));
+                        }
+                    }
+                }
+                if (k.getLevel() == 50) {
+                    Bukkit.broadcastMessage(ocfg.getString("Killstreak.message-50").replace("&", "§").replaceAll("%player%", k.getName()).replaceAll("%streak%", String.valueOf(k.getLevel())));
+                    k.playSound(k.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 10.0F);
+                    if (ocfg.getBoolean("Killstreak.execute-commands") == true) {
+                        for (Object o : ocfg.getStringList("Killstreak.execute-commands-50")) {
+                            String type = (String) o;
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), String.valueOf(type).replaceAll("%player%", k.getName()).replace("&", "§"));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+

@@ -1,0 +1,54 @@
+package eu.imusingaura.proutils.commands;
+
+import eu.imusingaura.proutils.ProUtils;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+
+import static org.bukkit.Bukkit.getServer;
+
+public class Stats implements CommandExecutor {
+
+    public FileConfiguration stcfg;
+    public File stats;
+
+    public FileConfiguration mcfg;
+    public File messages;
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        stats = new File(pl.getDataFolder(), "stats.yml");
+        stcfg = YamlConfiguration.loadConfiguration(stats);
+        messages = new File(pl.getDataFolder(), "messages.yml");
+        mcfg = YamlConfiguration.loadConfiguration(messages);
+        Player player = (Player) sender;
+        if (cmd.getName().equalsIgnoreCase("stats")) {
+            if (args.length == 1) {
+                Player target = getServer().getPlayer(args[0]);
+                String uuid = target.getUniqueId().toString();
+                int kills = stcfg.getInt("Users." + uuid + ".kills");
+                int deaths = stcfg.getInt("Users." + uuid + ".deaths");
+                for (String msg : mcfg.getStringList("Stats.message-others")) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg).replaceAll("%kills%", String.valueOf(kills)).replaceAll("%deaths%", String.valueOf(deaths)).replaceAll("%target%", target.getName()));
+                }
+            } else if (args.length == 0) {
+                String uuid = player.getUniqueId().toString();
+                int kills = stcfg.getInt("Users." + uuid + ".kills");
+                int deaths = stcfg.getInt("Users." + uuid + ".deaths");
+                for (String msg : mcfg.getStringList("Stats.message")) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg).replaceAll("%kills%", String.valueOf(kills)).replaceAll("%deaths%", String.valueOf(deaths)).replaceAll("%name%", player.getName()));
+                }
+            }
+        }
+        return false;
+    }
+}

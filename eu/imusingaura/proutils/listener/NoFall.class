@@ -1,0 +1,33 @@
+package eu.imusingaura.proutils.listener;
+
+import eu.imusingaura.proutils.ProUtils;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+
+public class NoFall implements Listener {
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    public FileConfiguration ocfg;
+    public File optional;
+
+    @EventHandler
+    public void noFall(EntityDamageEvent e) {
+        optional = new File(pl.getDataFolder(), "optional.yml");
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        if(!(e.getEntity() instanceof Player)) return;
+        Player p = (Player) e.getEntity();
+        if(ocfg.getBoolean("NoFall.enable") == true) {
+            if(e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                e.setCancelled(true);
+            }
+        }
+    }
+}

@@ -1,0 +1,38 @@
+package eu.imusingaura.proutils;
+
+import eu.imusingaura.proutils.listener.*;
+import eu.imusingaura.proutils.api.ConfigManager;
+import eu.imusingaura.proutils.commands.Particle;
+import eu.imusingaura.proutils.commands.Stats;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class ProUtils extends JavaPlugin {
+
+    private ConfigManager configManager;
+
+    @Override
+    public void onEnable() {
+        getServer().getConsoleSender().sendMessage("§aProUtils §8» §7Has been §aenabled!");
+        Bukkit.getPluginManager().registerEvents(new Join(), this);
+        Bukkit.getPluginManager().registerEvents(new Quit(), this);
+        Bukkit.getPluginManager().registerEvents(new NoFall(), this);
+        Bukkit.getPluginManager().registerEvents(new Deaths(), this);
+        Bukkit.getPluginManager().registerEvents(new EnderCooldown(), this);
+        Bukkit.getPluginManager().registerEvents(new Motd(), this);
+        getCommand("stats").setExecutor(new Stats());
+        getCommand("particle").setExecutor(new Particle());
+        loadConfigManager();
+    }
+
+
+    @Override
+    public void onDisable() {
+        getServer().getConsoleSender().sendMessage("§aProUtils §8» §7Has been §adisabled!");
+    }
+
+    public void loadConfigManager() {
+        configManager = new ConfigManager();
+        configManager.setupAll();
+    }
+}

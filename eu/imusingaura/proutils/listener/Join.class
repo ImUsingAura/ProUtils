@@ -1,0 +1,81 @@
+package eu.imusingaura.proutils.listener;
+import eu.imusingaura.proutils.ProUtils;
+import eu.imusingaura.proutils.api.ScoreboardManagerAPI;
+import net.minecraft.server.v1_12_R1.ChatComponentText;
+import net.minecraft.server.v1_12_R1.PacketPlayOutTitle;
+import net.minecraft.server.v1_12_R1.PlayerConnection;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import net.minecraft.server.v1_12_R1.PacketPlayOutTitle.EnumTitleAction;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+
+public class Join implements Listener {
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    public FileConfiguration tcfg;
+    public File titles;
+
+    public FileConfiguration mcfg;
+    public File messages;
+
+    public FileConfiguration stcfg;
+    public File stats;
+
+    public FileConfiguration ocfg;
+    public File optional;
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        titles = new File(pl.getDataFolder(), "titles.yml");
+        tcfg = YamlConfiguration.loadConfiguration(titles);
+        messages = new File(pl.getDataFolder(), "messages.yml");
+        mcfg = YamlConfiguration.loadConfiguration(messages);
+        stats = new File(pl.getDataFolder(), "stats.yml");
+        stcfg = YamlConfiguration.loadConfiguration(stats);
+        optional = new File(pl.getDataFolder(), "optional.yml");
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        Player p = e.getPlayer();
+        ScoreboardManagerAPI.setupStandardBoard(p);
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            ScoreboardManagerAPI.setupStandardBoard(all);
+        }
+        if (tcfg.getBoolean("Titles.enable") == true) {
+            sendTitle(p, tcfg.getString("Titles.title-onjoin").replace("&", "§"), tcfg.getString("Titles.subtitle-onjoin").replace("&", "§"), 1, 20, 1);
+        }
+        if (mcfg.getBoolean("JoinAndLeave.enable") == true) {
+            e.setJoinMessage(mcfg.getString("JoinAndLeave.join-message").replace("&", "§").replaceAll("%player%", p.getName()));
+        }
+        String uuid = p.getUniqueId().toString();
+        if (!stcfg.contains("Users." + uuid)) {
+            stcfg.set("Users." + uuid + ".kills", 0);
+            stcfg.set("Users." + uuid + ".deaths", 0);
+            try {
+                stcfg.save(stats);
+            } catch (IOException event) {
+
+            }
+        }
+        p.setLevel(0);
+    }
+
+        public static void sendTitle (Player player, String title, String subtitle,int fadeIn, int stay, int fadeOut){
+            CraftPlayer craftplayer = (CraftPlayer) player;
+            PlayerConnection connection = craftplayer.getHandle().playerConnection;
+            ChatComponentText titleJSON = new ChatComponentText(title);
+            ChatComponentText subtitleJSON = new ChatComponentText(subtitle);
+            PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(EnumTitleAction.TITLE, titleJSON, fadeIn, stay, fadeOut);
+            PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, subtitleJSON);
+            connection.sendPacket(titlePacket);
+            connection.sendPacket(subtitlePacket);
+        }
+}

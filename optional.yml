@@ -1,0 +1,94 @@
+# ===================
+# |                 |
+# |      NoFall     |
+# |                 |
+# ===================
+
+#------------------------------------------
+NoFall:
+  enable: true
+#------------------------------------------
+
+# ===================
+# |                 |
+# |  KillsParticle  |
+# |                 |
+# ===================
+
+#------------------------------------------
+Kills:
+  enable: true
+  needed-kills: 45
+  no-kills: '&aProUtils &8» &7You dont have enough &akills!'
+  disabled: '&aProUtils &8» &7This option is &adisabled!'
+  p-off: '&aProUtils &8» &7Particles &adisabled!'
+  p-on: '&aProUtils &8» &7Particles &aenabled!'
+  usage: '&aProUtils &8» &7Use &a/particle on/off!'
+#------------------------------------------
+
+# ===================
+# |                 |
+# |  EnderCooldown  |
+# |                 |
+# ===================
+
+#------------------------------------------
+EnderCooldown:
+  enable: true
+  cooldown: 10
+  message: '&aProUtils &8» &7You need to wait &a%time% seconds!'
+#------------------------------------------
+
+# ===================
+# |                 |
+# |    Killstreak   |
+# |                 |
+# ===================
+
+#------------------------------------------
+Killstreak:
+  enable: true
+  execute-commands: true
+
+  message-5: '&a%player% &7did a killstreak of &a%streak% kills!'
+  execute-commands-5:
+    - 'say %player% ciao'
+    - 'give %player% diamond 1'
+
+  message-10: '&a%player% &7did a killstreak of &a%streak% kills!'
+  execute-commands-10:
+    - 'say %player% ciao'
+    - 'give %player% diamond 1'
+
+  message-20: '&a%player% &7did a killstreak of &a%streak% kills!'
+  execute-commands-20:
+    - 'say %player% ciao'
+    - 'give %player% diamond 1'
+
+  message-30: '&a%player% &7did a killstreak of &a%streak% kills!'
+  execute-commands-30:
+    - 'say %player% ciao'
+    - 'give %player% diamond 1'
+
+  message-40: '&a%player% &7did a killstreak of &a%streak% kills!'
+  execute-commands-40:
+    - 'say %player% ciao'
+    - 'give %player% diamond 1'
+
+  message-50: '&a%player% &7did a killstreak of &a%streak% kills!'
+  execute-commands-50:
+    - 'say %player% ciao'
+    - 'give %player% diamond 1'
+#------------------------------------------
+
+# ===================
+# |                 |
+# |      Motd       |
+# |                 |
+# ===================
+
+#------------------------------------------
+Motd:
+  enable: true
+  motd: '&aProUtils &cMotd &6is &ethe &dbest &2of &3all!'
+#------------------------------------------

@@ -1,0 +1,89 @@
+package eu.imusingaura.proutils.commands;
+
+import eu.imusingaura.proutils.ProUtils;
+import net.minecraft.server.v1_12_R1.EnumParticle;
+import net.minecraft.server.v1_12_R1.PacketPlayOutWorldParticles;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+
+public class Particle implements CommandExecutor {
+
+    public FileConfiguration ocfg;
+    public File optional;
+
+    public FileConfiguration stcfg;
+    public File stats;
+
+    int runnable;
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        optional = new File(pl.getDataFolder(), "optional.yml");
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        stats = new File(pl.getDataFolder(), "stats.yml");
+        stcfg = YamlConfiguration.loadConfiguration(stats);
+        Player player = (Player) sender;
+        if (cmd.getName().equalsIgnoreCase("particle")) {
+            if (args.length > 0) {
+                if (args[0].equalsIgnoreCase("on")) {
+                    if (ocfg.getBoolean("Kills.enable") == true) {
+                        String pUUID = player.getUniqueId().toString();
+                        int kills = stcfg.getInt("Users." + pUUID + ".kills");
+                        if (kills >= ocfg.getInt("Kills.needed-kills")) {
+
+                            player.sendMessage(ocfg.getString("Kills.p-on").replace("&", "§"));
+                            runnable = Bukkit.getScheduler().scheduleSyncRepeatingTask(pl, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    Location location = player.getLocation();
+
+                                    PacketPlayOutWorldParticles particles = new PacketPlayOutWorldParticles(EnumParticle.LAVA, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) 255, (float) 0, (float) 0, (float) 255, 0, 10);
+                                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(particles);
+                                }
+                            }, 0L, 0L);
+                        } else {
+                            player.sendMessage(ocfg.getString("Kills.no-kills").replace("&", "§"));
+                        }
+                    } else {
+                        player.sendMessage(ocfg.getString("Kills.disabled").replace("&", "§"));
+                    }
+                } else if (args[0].equalsIgnoreCase("off")) {
+                    if (ocfg.getBoolean("Kills.enable") == true) {
+                        String pUUID = player.getUniqueId().toString();
+                        int kills = stcfg.getInt("Users." + pUUID + ".kills");
+                        if (kills >= ocfg.getInt("Kills.needed-kills")) {
+                            cancel();
+                            player.sendMessage(ocfg.getString("Kills.p-off").replace("&", "§"));
+                        } else {
+                            player.sendMessage(ocfg.getString("Kills.no-kills").replace("&", "§"));
+                        }
+                    } else {
+                        player.sendMessage(ocfg.getString("Kills.disabled").replace("&", "§"));
+                    }
+                } else {
+                    player.sendMessage(ocfg.getString("Kills.usage").replace("&", "§"));
+                }
+            } else {
+                player.sendMessage(ocfg.getString("Kills.usage").replace("&", "§"));
+            }
+        }
+        return false;
+    }
+
+    public void cancel() {
+        Bukkit.getScheduler().cancelTask(runnable);
+    }
+}

@@ -1,0 +1,35 @@
+package eu.imusingaura.proutils.listener;
+
+import eu.imusingaura.proutils.ProUtils;
+import eu.imusingaura.proutils.api.ScoreboardManagerAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+
+public class Quit implements Listener {
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+    public FileConfiguration mcfg;
+    public File messages;
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        messages = new File(pl.getDataFolder(), "messages.yml");
+        mcfg = YamlConfiguration.loadConfiguration(messages);
+        Player p = e.getPlayer();
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            ScoreboardManagerAPI.setupStandardBoard(all);
+        }
+        if (mcfg.getBoolean("JoinAndLeave.enable") == true) {
+            e.setQuitMessage(mcfg.getString("JoinAndLeave.quit-message").replace("&", "§").replaceAll("%player%", p.getName()));
+        }
+        p.setLevel(0);
+    }
+}

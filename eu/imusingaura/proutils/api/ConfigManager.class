@@ -27,9 +27,6 @@ public class ConfigManager {
     public FileConfiguration stcfg;
     public File stats;
 
-    public FileConfiguration gcfg;
-    public File gui;
-
     public void setupAll() {
         if (!pl.getDataFolder().exists()) {
             pl.getDataFolder().mkdir();
@@ -40,7 +37,6 @@ public class ConfigManager {
         messages = new File(pl.getDataFolder(), "messages.yml");
         optional = new File(pl.getDataFolder(), "optional.yml");
         stats = new File(pl.getDataFolder(), "stats.yml");
-        gui = new File(pl.getDataFolder(), "gui.yml");
 
         if (!scoreboard.exists()) {
             pl.saveResource("scoreboard.yml", false);
@@ -58,16 +54,12 @@ public class ConfigManager {
         if (!stats.exists()) {
             pl.saveResource("stats.yml", false);
         }
-        if(!gui.exists()) {
-            pl.saveResource("gui.yml", false);
-        }
 
         scfg = YamlConfiguration.loadConfiguration(scoreboard);
         tcfg = YamlConfiguration.loadConfiguration(titles);
         mcfg = YamlConfiguration.loadConfiguration(messages);
         ocfg = YamlConfiguration.loadConfiguration(optional);
         stcfg = YamlConfiguration.loadConfiguration(stats);
-        gcfg = YamlConfiguration.loadConfiguration(gui);
     }
 
     public FileConfiguration getScfg() {
@@ -90,9 +82,6 @@ public class ConfigManager {
         return stcfg;
     }
 
-    public FileConfiguration getGcfg() {
-        return gcfg;
-    }
     public void saveAll() {
         try {
             scfg.save(scoreboard);
@@ -100,7 +89,6 @@ public class ConfigManager {
             mcfg.save(messages);
             ocfg.save(optional);
             stcfg.save(stats);
-            gcfg.save(gui);
         } catch (IOException e){
 
         }
@@ -112,6 +100,5 @@ public class ConfigManager {
         mcfg = YamlConfiguration.loadConfiguration(messages);
         ocfg = YamlConfiguration.loadConfiguration(optional);
         stcfg = YamlConfiguration.loadConfiguration(stats);
-        gcfg = YamlConfiguration.loadConfiguration(gui);
     }
 }

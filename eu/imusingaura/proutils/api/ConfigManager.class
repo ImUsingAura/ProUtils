@@ -1,0 +1,117 @@
+package eu.imusingaura.proutils.api;
+
+import eu.imusingaura.proutils.ProUtils;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.io.IOException;
+
+public class ConfigManager {
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    public FileConfiguration scfg;
+    public File scoreboard;
+
+    public FileConfiguration tcfg;
+    public File titles;
+
+    public FileConfiguration mcfg;
+    public File messages;
+
+    public FileConfiguration ocfg;
+    public File optional;
+
+    public FileConfiguration stcfg;
+    public File stats;
+
+    public FileConfiguration gcfg;
+    public File gui;
+
+    public void setupAll() {
+        if (!pl.getDataFolder().exists()) {
+            pl.getDataFolder().mkdir();
+        }
+
+        scoreboard = new File(pl.getDataFolder(), "scoreboard.yml");
+        titles = new File(pl.getDataFolder(), "titles.yml");
+        messages = new File(pl.getDataFolder(), "messages.yml");
+        optional = new File(pl.getDataFolder(), "optional.yml");
+        stats = new File(pl.getDataFolder(), "stats.yml");
+        gui = new File(pl.getDataFolder(), "gui.yml");
+
+        if (!scoreboard.exists()) {
+            pl.saveResource("scoreboard.yml", false);
+
+        }
+        if (!titles.exists()) {
+            pl.saveResource("titles.yml", false);
+        }
+        if (!messages.exists()) {
+            pl.saveResource("messages.yml", false);
+        }
+        if (!optional.exists()) {
+            pl.saveResource("optional.yml", false);
+        }
+        if (!stats.exists()) {
+            pl.saveResource("stats.yml", false);
+        }
+        if(!gui.exists()) {
+            pl.saveResource("gui.yml", false);
+        }
+
+        scfg = YamlConfiguration.loadConfiguration(scoreboard);
+        tcfg = YamlConfiguration.loadConfiguration(titles);
+        mcfg = YamlConfiguration.loadConfiguration(messages);
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        stcfg = YamlConfiguration.loadConfiguration(stats);
+        gcfg = YamlConfiguration.loadConfiguration(gui);
+    }
+
+    public FileConfiguration getScfg() {
+        return scfg;
+    }
+
+    public FileConfiguration getTcfg() {
+        return tcfg;
+    }
+
+    public FileConfiguration getMcfg() {
+        return mcfg;
+    }
+
+    public FileConfiguration getOcfg() {
+        return ocfg;
+    }
+
+    public FileConfiguration getStcfg() {
+        return stcfg;
+    }
+
+    public FileConfiguration getGcfg() {
+        return gcfg;
+    }
+    public void saveAll() {
+        try {
+            scfg.save(scoreboard);
+            tcfg.save(titles);
+            mcfg.save(messages);
+            ocfg.save(optional);
+            stcfg.save(stats);
+            gcfg.save(gui);
+        } catch (IOException e){
+
+        }
+    }
+
+    public void reloadAll() {
+        scfg = YamlConfiguration.loadConfiguration(scoreboard);
+        tcfg = YamlConfiguration.loadConfiguration(titles);
+        mcfg = YamlConfiguration.loadConfiguration(messages);
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        stcfg = YamlConfiguration.loadConfiguration(stats);
+        gcfg = YamlConfiguration.loadConfiguration(gui);
+    }
+}

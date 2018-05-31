@@ -1,0 +1,12 @@
+# ===================
+# |                 |
+# |      Titles     |
+# |                 |
+# ===================
+
+#------------------------------------------
+Titles:
+  enable: true
+  title-onjoin: '&aProUtils &7By ExArt'
+  subtitle-onjoin: '&7I hope you like &ait!'
+#------------------------------------------

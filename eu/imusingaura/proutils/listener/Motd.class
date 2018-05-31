@@ -1,0 +1,30 @@
+package eu.imusingaura.proutils.listener;
+
+import eu.imusingaura.proutils.ProUtils;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerListPingEvent;
+import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+
+public class Motd implements Listener {
+
+    public FileConfiguration ocfg;
+    public File optional;
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    @EventHandler
+    public void onPing(ServerListPingEvent e) {
+        optional = new File(pl.getDataFolder(), "optional.yml");
+        ocfg = YamlConfiguration.loadConfiguration(optional);
+        if (ocfg.getBoolean("Motd.enable") == true) {
+            String motd = ocfg.getString("Motd.motd");
+            motd = motd.replace("&", "§");
+            e.setMotd(motd);
+        }
+    }
+}

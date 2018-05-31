@@ -1,0 +1,47 @@
+package eu.imusingaura.proutils.api;
+
+
+import eu.imusingaura.proutils.ProUtils;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.*;
+import java.io.File;
+import java.util.List;
+
+public class ScoreboardManagerAPI {
+
+    private static Plugin pl = ProUtils.getPlugin(ProUtils.class);
+
+    public static FileConfiguration scfg;
+    public static File scoreboard;
+
+    public static void setupStandardBoard(Player p) {
+        scoreboard = new File(pl.getDataFolder(), "scoreboard.yml");
+        scfg = YamlConfiguration.loadConfiguration(scoreboard);
+
+        if (scfg.getBoolean("Scoreboard.enable") == true) {
+            String title = scfg.getString("Scoreboard.name").replace("&","§");
+            Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+
+            Objective obj = board.registerNewObjective("dummy", "title");
+            obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+            obj.setDisplayName(title);
+
+            List<String> lines = scfg.getStringList("Scoreboard.lines");
+            int size = lines.size() + 1;
+            for (String linestring : lines) {
+                size--;
+                Team line = board.registerNewTeam("line" + size);
+                line.addEntry(ChatColor.translateAlternateColorCodes('&', linestring).replaceAll("%name%", p.getName()));
+                obj.getScore(ChatColor.translateAlternateColorCodes('&', linestring).replaceAll("%name%", p.getName())).setScore(size);
+            }
+
+            p.setScoreboard(board);
+        }
+    }
+}
+

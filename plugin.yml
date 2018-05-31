@@ -1,0 +1,7 @@
+name: ProUtils
+author: ImUsingAura
+version: 1.0
+main: eu.imusingaura.proutils.ProUtils
+commands:
+  stats:
+  particle:
